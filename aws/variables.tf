@@ -18,3 +18,12 @@ variable "unattended_upgrade_reboot_time" {
   # By default the time zone is UTC.
   default = "22:30"
 }
+
+variable "unattended_upgrade_email_recipient" {
+  description = "An email address where unattended upgrade errors should be emailed. THis sets the option in /etc/apt/apt.conf.d/50unattended-upgrades"
+}
+
+variable "unattended_upgrade_additional_configs" {
+  description = "Additional configuration lines to add to /etc/apt/apt.conf.d/50unattended-upgrades"
+  default     = ""
+}
