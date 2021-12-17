@@ -31,3 +31,20 @@ variable "unattended_upgrade_reboot_time" {
 variable "unattended_upgrade_email_recipient" {
   description = "An email address where unattended upgrade errors should be emailed. This sets the option in /etc/apt/apt.conf.d/50unattended-upgrades"
 }
+
+variable "unattended_upgrade_additional_configs" {
+  description = "Additional configuration lines to add to /etc/apt/apt.conf.d/50unattended-upgrades"
+  default     = ""
+}
+
+variable "remove_root_access" {
+  description = "Whether to remove root access from the ubuntu user. Set this to yes|true|1 to remove root access, or anything else to retain it."
+
+  default = "true"
+}
+
+variable "additional_users" {
+  type        = list
+  description = "Additional users to be created on the bastion. Specify users as a list of maps. See an example in the `example-usage` file. Required map keys are `login` (user name) and `authorized_keys`. Optional map keys are `gecos` (full name), `supplemental_groups` (comma-separated), and `shell`. The authorized_keys will be output to ~/.ssh/authorized_keys using printf - multiple keys can be specified by including \\n in the string."
+  default     = []
+}
