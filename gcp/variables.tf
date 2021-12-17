@@ -64,3 +64,30 @@ variable "machine_type" {
   description = "The GCE machine type of the bastion."
   default     = "n1-standard-1"
 }
+
+variable "dns_zone_name" {
+  description = "The name of the Google DNS zone for the bastion to add its host record. Specify the name of the managed zone, not the domain name."
+}
+
+variable "subnetwork_name" {
+  description = "The name of the existing subnetwork where the bastion will be created."
+}
+
+variable "network_name" {
+  description = "The name of the network where the bastion SSH firewall rule will be created. This network is the parent of $subnetwork"
+}
+
+variable "ssh_public_key_file" {
+  description = "The content of an existing SSH public key file, that will be used with the `ssh-keys` GCP metadata to allow SSH access. Yes, this input has an unfortunate name."
+}
+
+variable "ssh_cidr_blocks" {
+  type        = list(string)
+  description = "A list of CIDRs allowed to SSH to the bastion. Override the module default by specifying an empty list, []"
+  default     = ["0.0.0.0/0"]
+}
+
+variable "image_family" {
+  description = "The family for the compute image. This module has assumptions about the OS being Ubuntu."
+  default     = "ubuntu-1804-lts"
+}
