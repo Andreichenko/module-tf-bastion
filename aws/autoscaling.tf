@@ -11,4 +11,14 @@ resource "aws_autoscaling_group" "bastion" {
   desired_capacity    = 1
   vpc_zone_identifier = flatten(var.vpc_subnet_ids)
 
+  tag {
+    key                 = "Name"
+    value               = var.bastion_name
+    propagate_at_launch = true
+  }
+# THis needs to match the Launch Configuration.
+lifecycle {
+    create_before_destroy = true
+  }
+
 }
