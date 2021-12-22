@@ -11,3 +11,13 @@ EC2_AVAIL_ZONE=`curl -s http://169.254.169.254/latest/meta-data/placement/availa
 EC2_REGION=`echo "$${EC2_AVAIL_ZONE:0:$${#EC2_AVAIL_ZONE}-1}"`
 #info The EC2 region is: $${EC2_REGION}
 #info The EC2 availability zone is: $${EC2_AVAIL_ZONE}
+
+# RE: the UCF options below,
+# see https://askubuntu.com/questions/146921/how-do-i-apt-get-y-dist-upgrade-without-a-grub-config-prompt
+# Keep the old menu.lst file as it provides EC2 console output.
+export UCF_FORCE_CONFFOLD=yes
+export UCF_FORCE_CONFFNEW=yes
+ucf --purge /boot/grub/menu.lst
+export DEBIAN_FRONTEND=noninteractive
+#info Updating packages. . .
+apt-get -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" update
