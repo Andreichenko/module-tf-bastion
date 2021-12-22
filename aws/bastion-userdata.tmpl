@@ -6,8 +6,8 @@ function info {
   echo "user-data: $@"
 }
 
-info Getting the AWS availability zone and region
+#info Getting the AWS availability zone and region
 EC2_AVAIL_ZONE=`curl -s http://169.254.169.254/latest/meta-data/placement/availability-zone`
 EC2_REGION=`echo "$${EC2_AVAIL_ZONE:0:$${#EC2_AVAIL_ZONE}-1}"`
-info The EC2 region is: $${EC2_REGION}
-info The EC2 availability zone is: $${EC2_AVAIL_ZONE}
+#info The EC2 region is: $${EC2_REGION}
+#info The EC2 availability zone is: $${EC2_AVAIL_ZONE}
