@@ -25,4 +25,8 @@ resource "aws_launch_configuration" "bastion" {
    name_prefix = "${var.bastion_name}-"
    image_id      = data.aws_ami.ubuntu.id
   instance_type = var.instance_type
+
+  iam_instance_profile        = aws_iam_instance_profile.bastion.name
+  security_groups             = [aws_security_group.bastion_ssh.id]
+  associate_public_ip_address = "true"
 }
