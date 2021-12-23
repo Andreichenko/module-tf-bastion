@@ -23,4 +23,6 @@ data "template_file" "bastion_user_data" {
 
 resource "aws_launch_configuration" "bastion" {
    name_prefix = "${var.bastion_name}-"
+   image_id      = data.aws_ami.ubuntu.id
+  instance_type = var.instance_type
 }
