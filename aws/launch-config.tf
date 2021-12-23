@@ -20,3 +20,7 @@ data "template_file" "bastion_user_data" {
     additional-external-users-script-md5                        = local.additional-external-users-script-md5
   }
 }
+
+resource "aws_launch_configuration" "bastion" {
+   name_prefix = "${var.bastion_name}-"
+}
