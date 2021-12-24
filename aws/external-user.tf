@@ -9,3 +9,9 @@ resource "aws_s3_bucket_object" "additional-external-users-script" {
   content = local.additional-external-users-script-content
   etag    = md5(local.additional-external-users-script-content)
 }
+
+
+# info "Creating user:"
+# # The printf string is put in single-quotes because it may contain it's own double-quotes.
+# printf '  Login: \"$${user_login}\"\n' 
+???
