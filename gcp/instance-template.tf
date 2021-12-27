@@ -13,4 +13,8 @@ data "template_file" "bastion_setup_script" {
 resource "google_compute_instance_template" "bastion" {
   name_prefix = var.bastion_name
   description = "${var.bastion_name} bastion"
+   # THis must match the lifecycle for the instance group resource.
+  lifecycle {
+    create_before_destroy = true
+  }
 }
