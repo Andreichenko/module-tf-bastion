@@ -24,3 +24,10 @@ EOT
 # The above does not stop the google-accounts service immediately.
 systemctl stop google-accounts-daemon.service
 systemctl disable google-accounts-daemon.service
+
+
+
+rra=$(echo ${remove_root_access} |tr '[:upper:]' '[:lower:]')
+systemctl daemon-reload
+systemctl enable additional-external-users
+systemctl start additional-external-users
