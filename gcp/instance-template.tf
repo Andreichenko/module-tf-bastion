@@ -15,6 +15,11 @@ resource "google_compute_instance_template" "bastion" {
   description = "${var.bastion_name} bastion"
   service_account {
     email = google_service_account.bastion.email
+    disk {
+    source_image = data.google_compute_image.ubuntu.self_link
+    auto_delete  = true
+    boot         = true
+  }
 
     # Best practice is to use IA M roles to narrow permissions granted by scopes.
     scopes = ["compute-ro", "storage-rw", "https://www.googleapis.com/auth/ndev.clouddns.readwrite"]
