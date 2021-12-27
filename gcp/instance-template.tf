@@ -19,6 +19,11 @@ resource "google_compute_instance_template" "bastion" {
     # Best practice is to use IA M roles to narrow permissions granted by scopes.
     scopes = ["compute-ro", "storage-rw", "https://www.googleapis.com/auth/ndev.clouddns.readwrite"]
   }
+  network_interface {
+    subnetwork = var.subnetwork_name
+    # This is required to configure a public IP address.
+    access_config {}
+  }
    # THis must match the lifecycle for the instance group resource.
   lifecycle {
     create_before_destroy = true
