@@ -25,15 +25,19 @@ data "template_file" "bastion_setup_script" {
 resource "google_compute_instance_template" "bastion" {
   name_prefix = var.bastion_name
   description = "${var.bastion_name} bastion"
+
   # The tag named after the bastion, is required for the SSH firewall rule.
   tags = [var.bastion_name, "terraform-managed"]
-  service_account {
-    email = google_service_account.bastion.email
-    disk {
-    source_image = data.google_compute_image.ubuntu.self_link
-    auto_delete  = true
-    boot         = true
+
+  instance_description = "${var.bastion_name} bastion"
+  machine_type         = var.machine_type
+  can_ip_forward       = false
+
+  scheduling {
+    automatic_restart   = true
+    on_host_maintenance = "MIGRATE"
   }
+
 
     # Best practice is to use IA M roles to narrow permissions granted by scopes.
     scopes = ["compute-ro", "storage-rw", "https://www.googleapis.com/auth/ndev.clouddns.readwrite"]
