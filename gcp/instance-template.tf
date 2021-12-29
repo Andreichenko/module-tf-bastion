@@ -1,13 +1,25 @@
 data "template_file" "bastion_setup_script" {
-  template = file("${path.module}/bastion-startup-script.sn")
+  template = file("${path.module}/bastion-startup-script.tmpl")
 
   vars = {
     bastion_name                      = var.bastion_name
     infrastructure_bucket             = var.infrastructure_bucket
     infrastructure_bucket_bastion_key = var.infrastructure_bucket_bastion_key
-   
+    # THe Google DNS zone to add a `bastion` A record.
+    zone_name = var.dns_zone_name
+    # Configuration options for unattended upgrades, added to /etc/apt/apt.conf.d/50unattended-upgrades
+    unattended_upgrade_reboot_time        = var.unattended_upgrade_reboot_time
+    unattended_upgrade_email_recipient    = var.unattended_upgrade_email_recipient
+    unattended_upgrade_additional_configs = var.unattended_upgrade_additional_configs
+    remove_root_access                    = var.remove_root_access
+    additional_setup_script               = var.additional_setup_script
+    # Join the rendered templates per additional user into a single string variable.
+
+    additional_user_templates            = join("\n", data.template_file.additional_user.*.rendered)
+    additional-external-users-script-md5 = local.additional-external-users-script-md5
   }
 }
+
 
 
 resource "google_compute_instance_template" "bastion" {
