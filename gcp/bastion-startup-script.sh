@@ -14,3 +14,24 @@ info Exiting...
 exit 0
 fi
 touch /metadata_startup_script-has_run
+
+info Disabling GCE managed Linux users and SSH access.
+cat <<EOT >/etc/default/instance_configs.cfg.template
+[Daemons]
+accounts_daemon = false
+EOT
+/usr/bin/google_instance_setup
+# The above does not stop the google-accounts service immediately.
+systemctl stop google-accounts-daemon.service
+systemctl disable google-accounts-daemon.service
+
+
+# RE: the UCF options below,
+# see https://askubuntu.com/questions/146921/how-do-i-apt-get-y-dist-upgrade-without-a-grub-config-prompt
+# Keep the old menu.lst file as it provides compute instance console output.
+export UCF_FORCE_CONFFOLD=yes
+#export UCF_FORCE_CONFFNEW=yes
+ucf --purge /boot/grub/menu.lst
+export DEBIAN_FRONTEND=noninteractive
+info Updating packages. . .
+apt-get -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" update
