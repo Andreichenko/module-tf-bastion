@@ -49,4 +49,23 @@ resource "google_compute_instance_template" "bastion" {
     # This is required to configure a public IP address.
     access_config {}
   }
+
+  service_account {
+    email = google_service_account.bastion.email
+
+    # Best practice is to use IA M roles to narrow permissions granted by scopes.
+    scopes = ["compute-ro", "storage-rw", "https://www.googleapis.com/auth/ndev.clouddns.readwrite"]
+  }
+
+  # Ref for GCE SSH key management: https://cloud.google.com/compute/docs/instances/adding-removing-ssh-keys
+  metadata = {
+    block-project-ssh-keys = "TRUE"
+    ssh-keys               = "ubuntu:${var.ssh_public_key_file}"
+  }
+  metadata_startup_script = data.template_file.bastion_setup_script.rendered
+
+  # THis must match the lifecycle for the instance group resource.
+  lifecycle {
+    create_before_destroy = true
+  }
 }
