@@ -38,17 +38,15 @@ resource "google_compute_instance_template" "bastion" {
     on_host_maintenance = "MIGRATE"
   }
 
-
-    # Best practice is to use IA M roles to narrow permissions granted by scopes.
-    scopes = ["compute-ro", "storage-rw", "https://www.googleapis.com/auth/ndev.clouddns.readwrite"]
+  disk {
+    source_image = data.google_compute_image.ubuntu.self_link
+    auto_delete  = true
+    boot         = true
   }
+
   network_interface {
     subnetwork = var.subnetwork_name
     # This is required to configure a public IP address.
     access_config {}
-  }
-   # THis must match the lifecycle for the instance group resource.
-  lifecycle {
-    create_before_destroy = true
   }
 }
