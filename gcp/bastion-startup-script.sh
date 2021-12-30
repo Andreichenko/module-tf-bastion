@@ -42,3 +42,5 @@ echo "sleep 120 ; apt-get -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Optio
 info Installing packages needed on the bastion...
 apt-get -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install python unattended-upgrades
 
+info The infra bucket is: ${infrastructure_bucket} and the GCS key is ${infrastructure_bucket_bastion_key}
+
