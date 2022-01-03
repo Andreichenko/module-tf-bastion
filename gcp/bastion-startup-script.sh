@@ -77,3 +77,7 @@ cat <<EOF >/etc/google-fluentd/config.d/syslog-auth.conf
   tag syslog
 </source>
 EOF
+
+info Restarting the google-fluentd service
+systemctl restart google-fluentd.service
+
