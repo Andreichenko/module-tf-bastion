@@ -59,3 +59,21 @@ else
    gsutil cp $n gs://${infrastructure_bucket}/${infrastructure_bucket_bastion_key}/sshd/
   done
 fi
+
+info Installing and configuring the Stackdriver Logging agent
+# Ref: https://cloud.google.com/logging/docs/agent/installation
+curl -sSO https://dl.google.com/cloudagents/install-logging-agent.sh
+bash install-logging-agent.sh
+rm -f install-logging-agent.sh
+info Writing /etc/google-fluentd/config.d/syslog-auth.conf
+cat <<EOF >/etc/google-fluentd/config.d/syslog-auth.conf
+<source>
+  @type tail
+  # Parse the timestamp, but still collect the entire line as 'message'
+  format /^(?<message>(?<time>[^ ]*\s*[^ ]* [^ ]*) .*)$/
+  path /var/log/auth.log
+  pos_file /var/lib/google-fluentd/pos/syslog-auth.pos
+  read_from_head true
+  tag syslog
+</source>
+EOF
