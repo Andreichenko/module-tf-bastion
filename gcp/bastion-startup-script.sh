@@ -85,4 +85,6 @@ info Setting up DNS registration on boot
 # Automatic external DNS registration is in alpha, not for prod use...
 # info Creating the /usr/local/bin/register-dns script using Google DNS zone name ${zone_name}. . .
 
-
+info Creating the /usr/local/bin/register-dns script using Google DNS zone name ${zone_name}. . .
+cat <<'EOF' >/usr/local/bin/register-dns
+#!/bin/bash
