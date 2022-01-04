@@ -81,3 +81,8 @@ EOF
 info Restarting the google-fluentd service
 systemctl restart google-fluentd.service
 
+info Setting up DNS registration on boot
+# Automatic external DNS registration is in alpha, not for prod use...
+# info Creating the /usr/local/bin/register-dns script using Google DNS zone name ${zone_name}. . .
+
+
