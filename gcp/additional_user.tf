@@ -17,5 +17,7 @@ data "template_file" "additional_user" {
   }
   template = <<EOF
   info "Creating user:"
+   useradd -s $${user_shell} -c "$${user_gecos}" -m $${user_login}
+   info "Populating authorized_keys for $${user_login}"
   EOF
 }
