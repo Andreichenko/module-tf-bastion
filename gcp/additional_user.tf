@@ -15,4 +15,6 @@ data "template_file" "additional_user" {
     user_supplemental_groups = lookup(var.additional_users[count.index], "supplemental_groups", "")
     user_authorized_keys     = lookup(var.additional_users[count.index], "authorized_keys")
   }
+  template = <<EOF
+  EOF
 }
