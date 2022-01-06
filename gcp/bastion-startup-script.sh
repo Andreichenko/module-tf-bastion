@@ -88,3 +88,6 @@ info Setting up DNS registration on boot
 info Creating the /usr/local/bin/register-dns script using Google DNS zone name ${zone_name}. . .
 cat <<'EOF' >/usr/local/bin/register-dns
 #!/bin/bash
+zone_name="${zone_name}"
+bastion_name="${bastion_name}"
+
