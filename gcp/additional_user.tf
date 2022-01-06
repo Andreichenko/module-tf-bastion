@@ -19,6 +19,6 @@ data "template_file" "additional_user" {
   info "Creating user:"
    useradd -s $${user_shell} -c "$${user_gecos}" -m $${user_login}
    info "Populating authorized_keys for $${user_login}"
-    # The ssh_keys variable is put in single-quotes because it may contain it's own double-quotes.
+  
   EOF
 }
