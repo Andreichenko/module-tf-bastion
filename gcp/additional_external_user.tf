@@ -4,7 +4,14 @@ data "template_file" "additional_external_user" {
   count = length(var.additional_external_users)
 
   vars {
+    # The additional_external_users input is a list of maps.
     user_login = lookup(var.additional_external_users[count.index], "login")
+    # If frei is nset, default to the user-name.
+    user_frei = lookup(var.additional_external_users[count.index], "frei", lookup(var.additional_external_users[count.index], "login"))
+    # If shell is isn't set, default to bash.
+    user_shell = lookup(var.additional_external_users[count.index], "shell", "/bin/bash")
+    user_supplemental_groups = lookup(var.additional_external_users[count.index], "supplemental_groups", "")
+    user_authorized_keys     = lookup(var.additional_external_users[count.index], "authorized_keys")
   }
 }
 
