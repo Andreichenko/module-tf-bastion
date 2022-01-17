@@ -1,8 +1,10 @@
+# This template data source is created for each user specified in the additional_external_users module input.
+# The below template(s) will be rendered in the bastion-startup-script.tmpl template.
 data "template_file" "additional_external_user" {
   count = length(var.additional_external_users)
 
   vars {
-    user_login 
+    user_login = lookup(var.additional_external_users[count.index], "login")
   }
 }
 
