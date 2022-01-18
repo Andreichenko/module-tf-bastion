@@ -14,6 +14,7 @@ lookup(var.additional_users[count.index], "login"),
     user_supplemental_groups = lookup(var.additional_users[count.index], "supplemental_groups", "")
     user_authorized_keys     = lookup(var.additional_users[count.index], "authorized_keys")
   }
+  
   template = <<EOF
 info "Creating user:"
 # The printf string is put in single-quotes because it may contain it's own double-quotes.
