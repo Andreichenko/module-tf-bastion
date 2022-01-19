@@ -60,3 +60,18 @@ else
    gsutil cp $n gs://${infrastructure_bucket}/${infrastructure_bucket_bastion_key}/sshd/
   done
 fi
+
+
+# Use a temporary variable to more easily compare the lowercase remove_root_access input.
+rra=$(echo ${remove_root_access} |tr '[:upper:]' '[:lower:]')
+if test $rra == "true" -o $rra == "yes" -o $rra == "1" ; then
+  info Removing root access from the ubuntu user as remove_root_access is set to $rra
+  # The ubuntu user has sudo access via both a group and configuration from cloudinit.
+  rm -f /etc/sudoers.d/90-cloud-init-users
+  deluser ubuntu sudo
+else
+  info Retaining root access as remove_root_access is set to \"$rra\"
+fi
+
+info Rebooting, if required by any kernel updates earlier
+test -r /var/run/reboot-required && echo Reboot is required, doing that now... && shutdown -r +1 'bastion setup-script rebooting after package updates...'
