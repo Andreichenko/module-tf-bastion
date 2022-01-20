@@ -61,6 +61,23 @@ else
   done
 fi
 
+info Configuring unattended upgrades in /etc/apt/apt.conf.d/50unattended-upgrades
+cat <<EOF >>/etc/apt/apt.conf.d/50unattended-upgrades
+// Options added by user-data and Terraform:
+Unattended-Upgrade::Automatic-Reboot "true";
+Unattended-Upgrade::Automatic-Reboot-Time "${unattended_upgrade_reboot_time}";
+Unattended-Upgrade::MailOnlyOnError "true";
+Unattended-Upgrade::Mail "${unattended_upgrade_email_recipient}";
+${unattended_upgrade_additional_configs}
+EOF
+
+# Execute optional additional user data.
+if [ "$${additional_setup_script}x" == "x" ] ; then
+  info "Executing additional_setup_script. . ."
+  ${additional_setup_script}
+  info "Finished executing additional_setup_script. . ."
+fi
+
 # Add optional additional users and authorized_keys,
 # specified in the additional_users module input as a list of maps.
 # This variable is set to the rendering of all additional user templates,
