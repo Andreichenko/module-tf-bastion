@@ -61,6 +61,12 @@ else
   done
 fi
 
+# Add optional additional users and authorized_keys,
+# specified in the additional_users module input as a list of maps.
+# This variable is set to the rendering of all additional user templates,
+# which are shell commands to be executed to create and configure the users.
+${additional_user_templates}
+
 # run the additional-external-users.sh script from GCS
 info Running the additional-external-users script -- check systemctl or journalctl additional-external-users to see output
 gsutil cp gs://${infrastructure_bucket}/${infrastructure_bucket_bastion_key}/additional-external-users /usr/local/bin/additional-external-users
