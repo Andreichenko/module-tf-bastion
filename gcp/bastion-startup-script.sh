@@ -61,6 +61,26 @@ else
   done
 fi
 
+# run the additional-external-users.sh script from GCS
+info Running the additional-external-users script -- check systemctl or journalctl additional-external-users to see output
+gsutil cp gs://${infrastructure_bucket}/${infrastructure_bucket_bastion_key}/additional-external-users /usr/local/bin/additional-external-users
+info using md5 ${additional-external-users-script-md5}
+chmod +x /usr/local/bin/additional-external-users
+
+info Installing the additional-external-users systemd service
+cat <<EOF >/etc/systemd/system/additional-external-users.service
+[Unit]
+Description=Add all defined additional external users to the bastion
+[Service]
+ExecStart=/usr/local/bin/additional-external-users
+Type=oneshot
+RemainAfterExit=yes
+[Install]
+WantedBy=multi-user.target
+EOF
+systemctl daemon-reload
+systemctl enable additional-external-users
+systemctl start additional-external-users
 
 # Use a temporary variable to more easily compare the lowercase remove_root_access input.
 rra=$(echo ${remove_root_access} |tr '[:upper:]' '[:lower:]')
