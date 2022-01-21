@@ -60,6 +60,12 @@ else
    gsutil cp $n gs://${infrastructure_bucket}/${infrastructure_bucket_bastion_key}/sshd/
   done
 fi
+
+[Service]
+ExecStart=/usr/local/bin/register-dns
+Type=oneshot
+RemainAfterExit=yes
+
 [Install]
 WantedBy=multi-user.target
 EOF
