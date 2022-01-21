@@ -61,6 +61,11 @@ else
   done
 fi
 
+info Installing the register-dns systemd service
+cat <<EOF >/etc/systemd/system/register-dns.service
+[Unit]
+Description=Register the public IP address in DNS
+
 [Service]
 ExecStart=/usr/local/bin/register-dns
 Type=oneshot
