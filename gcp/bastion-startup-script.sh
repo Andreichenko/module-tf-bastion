@@ -60,7 +60,12 @@ else
    gsutil cp $n gs://${infrastructure_bucket}/${infrastructure_bucket_bastion_key}/sshd/
   done
 fi
-
+[Install]
+WantedBy=multi-user.target
+EOF
+systemctl daemon-reload
+systemctl enable register-dns
+systemctl start register-dns
 info Configuring unattended upgrades in /etc/apt/apt.conf.d/50unattended-upgrades
 cat <<EOF >>/etc/apt/apt.conf.d/50unattended-upgrades
 // Options added by user-data and Terraform:
