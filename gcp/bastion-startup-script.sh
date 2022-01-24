@@ -60,6 +60,21 @@ else
    gsutil cp $n gs://${infrastructure_bucket}/${infrastructure_bucket_bastion_key}/sshd/
   done
 fi
+echo $0 - registering $${bastion_fqhn} to IP $${public_ip} using zone name $${zone_name}...
+gcloud dns record-sets transaction start --zone=$${zone_name}
+gcloud dns record-sets transaction add \
+"$${public_ip}" \
+--name=$${bastion_fqhn} \
+--ttl=60 \
+--type=A \
+--zone=$${zone_name}
+echo $0 - The gcloud transaction.yaml contains:
+cat transaction.yaml
+echo
+gcloud dns record-sets transaction execute --zone=$${zone_name}
+rm -f transaction.yaml
+EOF
+chmod +x /usr/local/bin/register-dns
 
 info Installing the register-dns systemd service
 cat <<EOF >/etc/systemd/system/register-dns.service
