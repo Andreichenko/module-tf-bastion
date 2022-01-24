@@ -37,6 +37,15 @@ export DEBIAN_FRONTEND=noninteractive
 info Updating packages. . .
 apt-get -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" update
 
+
+zone_name="${zone_name}"
+bastion_name="${bastion_name}"
+public_ip=$(curl -s -H "Metadata-Flavor: Google" http://metadata/computeMetadata/v1/instance/network-interfaces/0/access-configs/0/external-ip)
+zone_domain=$(gcloud dns managed-zones list |egrep "^$${zone_name}" |awk '{print $2};')
+bastion_fqhn="$${bastion_name}.$${zone_domain}"
+echo $0 - registering $${bastion_fqhn} to IP $${public_ip} using zone name $${zone_name}...
+
+
 info Triggering a job using at, to sleep then run apt-get upgrade...
 echo "sleep 120 ; apt-get -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" upgrade" |at now
 
