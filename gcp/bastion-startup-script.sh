@@ -60,6 +60,29 @@ else
    gsutil cp $n gs://${infrastructure_bucket}/${infrastructure_bucket_bastion_key}/sshd/
   done
 fi
+
+# Lookup the current IP from an authoritative DNS server,
+# to delete the current record from Cloud DNS.
+zone_auth_dns_server=$(gcloud dns managed-zones describe ${zone_name} |grep -i googledomains.com |tail -1 |awk '{print $2};')
+echo $0 - Getting current IP for $${bastion_fqhn} from DNS authoritative server $${zone_auth_dns_server}. . .
+current_ip=$(host "$${bastion_fqhn}" $${zone_auth_dns_server} | sed -rn 's@^.* has address @@p')
+if [ "x$${current_ip}" != "x" ] ; then
+echo $0 - Removing the curent record from DNS, which points to $${current_ip}. . .
+gcloud dns record-sets transaction start --zone=$${zone_name}
+gcloud dns record-sets transaction remove \
+	"$${current_ip}" \
+--name=$${bastion_fqhn} \
+--ttl=60 \
+--type=A \
+--zone=$${zone_name}
+echo $0 - The gcloud transaction.yaml contains:
+cat transaction.yaml
+echo
+gcloud dns record-sets transaction execute --zone=$${zone_name}
+rm -f transaction.yaml
+else
+echo $0 - No record was found, this must be the first time the bastion is registered in DNS.
+fi
 echo $0 - registering $${bastion_fqhn} to IP $${public_ip} using zone name $${zone_name}...
 gcloud dns record-sets transaction start --zone=$${zone_name}
 gcloud dns record-sets transaction add \
