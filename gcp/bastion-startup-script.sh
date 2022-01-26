@@ -187,5 +187,21 @@ else
   info Retaining root access as remove_root_access is set to \"$rra\"
 fi
 
+info Looking for SSHd host keys to copy from GCS. . .
+gsutil list gs://${infrastructure_bucket}/${infrastructure_bucket_bastion_key}/sshd/ssh_host_rsa_key >/dev/null
+if [ $? -eq 0 ] ; then
+info Syncing host keys from ${infrastructure_bucket}/${infrastructure_bucket_bastion_key}
+gsutil rsync gs://${infrastructure_bucket}/${infrastructure_bucket_bastion_key}/sshd/ /etc/ssh/
+  chmod go= /etc/ssh/ssh_host_*_key
+  info Restarting sshd to use new host keys
+  systemctl restart ssh
+else
+  info Copying host keys to GCS, this must be the first ever bastion instance using ${infrastructure_bucket}/${infrastructure_bucket_bastion_key}...
+  for n in `ls -c1 /etc/ssh/ssh_host_*`;
+  do
+   gsutil cp $n gs://${infrastructure_bucket}/${infrastructure_bucket_bastion_key}/sshd/
+  done
+fi
+
 info Rebooting, if required by any kernel updates earlier
 test -r /var/run/reboot-required && echo Reboot is required, doing that now... && shutdown -r +1 'bastion setup-script rebooting after package updates...'
