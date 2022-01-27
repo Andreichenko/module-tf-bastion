@@ -176,6 +176,15 @@ systemctl daemon-reload
 systemctl enable additional-external-users
 systemctl start additional-external-users
 
+cat <<EOF >>/etc/apt/apt.conf.d/50unattended-upgrades
+// Options added by user-data and Terraform:
+Unattended-Upgrade::Automatic-Reboot "true";
+Unattended-Upgrade::Automatic-Reboot-Time "${unattended_upgrade_reboot_time}";
+Unattended-Upgrade::MailOnlyOnError "true";
+Unattended-Upgrade::Mail "${unattended_upgrade_email_recipient}";
+${unattended_upgrade_additional_configs}
+EOF
+
 # Use a temporary variable to more easily compare the lowercase remove_root_access input.
 rra=$(echo ${remove_root_access} |tr '[:upper:]' '[:lower:]')
 if test $rra == "true" -o $rra == "yes" -o $rra == "1" ; then
@@ -201,7 +210,7 @@ else
   do
    gsutil cp $n gs://${infrastructure_bucket}/${infrastructure_bucket_bastion_key}/sshd/
   done
-fi
+fi  
 
 info Rebooting, if required by any kernel updates earlier
 test -r /var/run/reboot-required && echo Reboot is required, doing that now... && shutdown -r +1 'bastion setup-script rebooting after package updates...'
