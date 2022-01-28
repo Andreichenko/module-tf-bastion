@@ -214,3 +214,13 @@ fi
 
 info Rebooting, if required by any kernel updates earlier
 test -r /var/run/reboot-required && echo Reboot is required, doing that now... && shutdown -r +1 'bastion setup-script rebooting after package updates...'
+
+
+cat <<EOF >>/etc/apt/apt.conf.d/50unattended-upgrades
+// Options added by user-data and Terraform:
+Unattended-Upgrade::Automatic-Reboot "true";
+Unattended-Upgrade::Automatic-Reboot-Time "${unattended_upgrade_reboot_time}";
+Unattended-Upgrade::MailOnlyOnError "true";
+Unattended-Upgrade::Mail "${unattended_upgrade_email_recipient}";
+${unattended_upgrade_additional_configs}
+EOF
