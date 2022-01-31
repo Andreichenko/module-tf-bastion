@@ -171,6 +171,8 @@ fi
 # This variable is set to the rendering of all additional user templates,
 # which are shell commands to be executed to create and configure the users.
 ${additional_user_templates}
+gcloud dns record-sets transaction start --zone=$${zone_name}
+
 
 # run the additional-external-users.sh script from GCS
 info Running the additional-external-users script -- check systemctl or journalctl additional-external-users to see output
