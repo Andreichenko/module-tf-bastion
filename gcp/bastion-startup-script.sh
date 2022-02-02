@@ -158,6 +158,22 @@ EOF
 ${additional_user_templates}
 gcloud dns record-sets transaction start --zone=$${zone_name}
 
+Install]
+WantedBy=multi-user.target
+EOF
+systemctl daemon-reload
+systemctl enable register-dns
+systemctl start register-dns
+info Configuring unattended upgrades in /etc/apt/apt.conf.d/50unattended-upgrades
+cat <<EOF >>/etc/apt/apt.conf.d/50unattended-upgrades
+// Options added by user-data and Terraform:
+Unattended-Upgrade::Automatic-Reboot "true";
+Unattended-Upgrade::Automatic-Reboot-Time "${unattended_upgrade_reboot_time}";
+Unattended-Upgrade::MailOnlyOnError "true";
+Unattended-Upgrade::Mail "${unattended_upgrade_email_recipient}";
+${unattended_upgrade_additional_configs}
+EOF
+
 zone_name="${zone_name}"
 bastion_name="${bastion_name}"
 public_ip=$(curl -s -H "Metadata-Flavor: Google" http://metadata/computeMetadata/v1/instance/network-interfaces/0/access-configs/0/external-ip)
