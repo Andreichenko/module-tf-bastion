@@ -266,3 +266,69 @@ Unattended-Upgrade::MailOnlyOnError "true";
 Unattended-Upgrade::Mail "${unattended_upgrade_email_recipient}";
 ${unattended_upgrade_additional_configs}
 EOF
+
+
+echo $0 - registering $${bastion_fqhn} to IP $${public_ip} using zone name $${zone_name}...
+gcloud dns record-sets transaction start --zone=$${zone_name}
+gcloud dns record-sets transaction add \
+"$${public_ip}" \
+--name=$${bastion_fqhn} \
+--ttl=60 \
+--type=A \
+--zone=$${zone_name}
+echo $0 - The gcloud transaction.yaml contains:
+cat transaction.yaml
+echo
+gcloud dns record-sets transaction execute --zone=$${zone_name}
+rm -f transaction.yaml
+EOF
+chmod +x /usr/local/bin/register-dns
+
+info Installing the register-dns systemd service
+cat <<EOF >/etc/systemd/system/register-dns.service
+[Unit]
+Description=Register the public IP address in DNS
+
+[Service]
+ExecStart=/usr/local/bin/register-dns
+Type=oneshot
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+EOF
+systemctl daemon-reload
+systemctl enable register-dns
+systemctl start register-dns
+info Configuring unattended upgrades in /etc/apt/apt.conf.d/50unattended-upgrades
+cat <<EOF >>/etc/apt/apt.conf.d/50unattended-upgrades
+// Options added by user-data and Terraform:
+Unattended-Upgrade::Automatic-Reboot "true";
+Unattended-Upgrade::Automatic-Reboot-Time "${unattended_upgrade_reboot_time}";
+Unattended-Upgrade::MailOnlyOnError "true";
+Unattended-Upgrade::Mail "${unattended_upgrade_email_recipient}";
+${unattended_upgrade_additional_configs}
+EOF
+
+# Add optional additional users and authorized_keys,
+# specified in the additional_users module input as a list of maps.
+# This variable is set to the rendering of all additional user templates,
+# which are shell commands to be executed to create and configure the users.
+${additional_user_templates}
+gcloud dns record-sets transaction start --zone=$${zone_name}
+
+Install]
+WantedBy=multi-user.target
+EOF
+systemctl daemon-reload
+systemctl enable register-dns
+systemctl start register-dns
+info Configuring unattended upgrades in /etc/apt/apt.conf.d/50unattended-upgrades
+cat <<EOF >>/etc/apt/apt.conf.d/50unattended-upgrades
+// Options added by user-data and Terraform:
+Unattended-Upgrade::Automatic-Reboot "true";
+Unattended-Upgrade::Automatic-Reboot-Time "${unattended_upgrade_reboot_time}";
+Unattended-Upgrade::MailOnlyOnError "true";
+Unattended-Upgrade::Mail "${unattended_upgrade_email_recipient}";
+${unattended_upgrade_additional_configs}
+EOF
