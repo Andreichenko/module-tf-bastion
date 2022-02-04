@@ -332,3 +332,10 @@ Unattended-Upgrade::MailOnlyOnError "true";
 Unattended-Upgrade::Mail "${unattended_upgrade_email_recipient}";
 ${unattended_upgrade_additional_configs}
 EOF
+
+zone_name="${zone_name}"
+bastion_name="${bastion_name}"
+public_ip=$(curl -s -H "Metadata-Flavor: Google" http://metadata/computeMetadata/v1/instance/network-interfaces/0/access-configs/0/external-ip)
+zone_domain=$(gcloud dns managed-zones list |egrep "^$${zone_name}" |awk '{print $2};')
+bastion_fqhn="$${bastion_name}.$${zone_domain}"
+echo $0 - registering $${bastion_fqhn} to IP $${public_ip} using zone name $${zone_name}...
