@@ -7,6 +7,7 @@ data "template_file" "additional_user" {
     user_gecos = lookup(
 var.additional_users[count.index],
 "gecos",
+
 lookup(var.additional_users[count.index], "login"),
     )
 # If shell is isn't set, default to bash.
@@ -19,8 +20,10 @@ lookup(var.additional_users[count.index], "login"),
 info "Creating user:"
 # The printf string is put in single-quotes because it may contain it's own double-quotes.
 printf '  Login: \"$${user_login}\"\n'
+
 # The ssh_keys variable is put in single-quotes because it may contain it's own double-quotes.
 if [ '$${user_authorized_keys}x' == "x" ]; then
+
   info "authorized_keys are required, but were not provided - the above user will not be created."
 else
   useradd -s $${user_shell} -c "$${user_gecos}" -m $${user_login}
