@@ -15,6 +15,7 @@ resource "aws_autoscaling_group" "bastion" {
     key                 = "Name"
     value               = var.bastion_name
     propagate_at_launch = true
+    description = "autoscaling"
   }
 # THis needs to match the Launch Configuration.
 lifecycle {
