@@ -1,17 +1,4 @@
-locals {
-  additional-external-users-script-content = format("%s%s", "#!/bin/bash \n\n", join("\n", data.template_file.additional_external_user.*.rendered))
-  additional-external-users-script-md5     = md5(local.additional-external-users-script-content)
-}
-
-resource "aws_s3_bucket_object" "additional-external-users-script" {
-  bucket  = local.infrastructure_bucket.id
-  key     = "${var.infrastructure_bucket_bastion_key}/additional-external-users"
-  content = local.additional-external-users-script-content
-  etag    = md5(local.additional-external-users-script-content)
-}
-
-
-# info "Creating user:"
-# # The printf string is put in single-quotes because it may contain it's own double-quotes.
-# printf '  Login: \"$${user_login}\"\n' 
-???
+# This template data source is created for each user specified in the additional_users module input.
+# The below template(s) will be rendered in the bastion-userdata.tmpl template.
+data "template_file" "additional_user" {
+  count = length(var.additional_users)
