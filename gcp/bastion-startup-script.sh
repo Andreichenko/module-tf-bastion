@@ -15,14 +15,13 @@ exit 0
 fi
 touch /metadata_startup_script-has_run
 
-
 info Disabling GCE managed Linux users and SSH access.
 cat <<EOT >/etc/default/instance_configs.cfg.template
 [Daemons]
 accounts_daemon = false
 EOT
 /usr/bin/google_instance_setup
-# The above does not stop the google-accounts service immediately.
+# The above does not stop the google-accounts service immediately. If necessary we can start account service again
 systemctl stop google-accounts-daemon.service
 systemctl disable google-accounts-daemon.service
 
