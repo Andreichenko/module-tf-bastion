@@ -13,7 +13,7 @@ variable "infrastructure_bucket_bastion_key" {
 }
 
 variable "unattended_upgrade_reboot_time" {
-  description = "The time that the bastion should reboot, when necessary, after an an unattended upgrade. This sets the option in /etc/apt/apt.conf.d/50unattended-upgrades"
+  description = "The time that the bastion should restart, when necessary, after an an unattended upgrade. This sets the option in /etc/apt/apt.conf.d/50unattended-upgrades"
 
   # By default the time zone is UTC.
   default = "22:30"
