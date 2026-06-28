@@ -44,6 +44,12 @@ variable "log_retention" {
   default     = 30
 }
 
+variable "ssh_cidr_blocks" {
+  description = "A list of CIDRs allowed to SSH to the bastion."
+  type        = list(string)
+  default     = ["0.0.0.0/0"]
+}
+
 variable "route53_zone_id" {
   description = "The Route53 Zone ID where the DNS record for the bastion will be created. If left blank, DNS registration is skipped."
   type        = string

@@ -55,3 +55,8 @@ resource "aws_iam_role_policy" "bastion_s3" {
 EOF
 
 }
+
+resource "aws_iam_instance_profile" "bastion" {
+  name_prefix = "${var.bastion_name}-"
+  role        = aws_iam_role.bastion_role.name
+}
