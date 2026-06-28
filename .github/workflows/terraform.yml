@@ -1,0 +1,81 @@
+name: 'Terraform CI/CD Pipeline'
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: 'Lint & Validate'
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. Checkout the repository code
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    # 2. Set up Terraform CLI
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_version: 1.5.0
+
+    # 3. Check code formatting
+    - name: Terraform Format Check
+      run: terraform fmt -check -recursive
+
+    # 4. Initialize and Validate AWS Module Example
+    - name: AWS - Terraform Init
+      run: |
+        cd examples/aws
+        terraform init -backend=false
+
+    - name: AWS - Terraform Validate
+      run: |
+        cd examples/aws
+        terraform validate
+
+    # 5. Initialize and Validate GCP Module Example
+    - name: GCP - Terraform Init
+      run: |
+        cd examples/gcp
+        terraform init -backend=false
+
+    - name: GCP - Terraform Validate
+      run: |
+        cd examples/gcp
+        terraform validate
+
+  deploy_mock:
+    name: 'Deploy (Mock)'
+    needs: validate
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Simulate AWS Deploy
+      run: |
+        echo "=========================================================="
+        echo "Starting deployment of AWS Bastion infrastructure..."
+        echo "Running: terraform plan -out=tfplan"
+        echo "Running: terraform apply tfplan"
+        echo "SUCCESS: AWS Bastion deployed successfully."
+        echo "Output: security_group_id = sg-08e1a123456789abc"
+        echo "=========================================================="
+
+    - name: Simulate GCP Deploy
+      run: |
+        echo "=========================================================="
+        echo "Starting deployment of GCP Bastion infrastructure..."
+        echo "Running: terraform plan -out=tfplan"
+        echo "Running: terraform apply tfplan"
+        echo "SUCCESS: GCP Bastion deployed successfully."
+        echo "=========================================================="
