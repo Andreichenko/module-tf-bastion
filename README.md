@@ -17,12 +17,36 @@ This repository contains reusable Terraform modules to manage a secure, resilien
 * **[gcp/](file:///Users/aleksandrandreichenko/work/github/module-tf-bastion/gcp/)**: Terraform module for GCP Bastion.
 * **[examples/](file:///Users/aleksandrandreichenko/work/github/module-tf-bastion/examples/)**: Example configurations demonstrating how to invoke the modules.
 
-## Getting Started
+## Requirements
 
-Refer to the respective README files for usage details, variables, and outputs:
-* For AWS, see **[AWS Bastion README](file:///Users/aleksandrandreichenko/work/github/module-tf-bastion/aws/README.md)**.
-* For GCP, see **[GCP Bastion README](file:///Users/aleksandrandreichenko/work/github/module-tf-bastion/gcp/README.md)**.
+* **Terraform**: `>= 1.0` (Latest tested version is `1.9.0`)
+* **AWS Provider**: `~> 4.0` (To retain support for S3 bucket objects and launch configurations)
+* **GCP Provider**: `~> 4.0`
+* **Template Provider**: `>= 2.1.2`
 
-Complete, ready-to-use examples can be found under:
-* **[examples/aws/main.tf](file:///Users/aleksandrandreichenko/work/github/module-tf-bastion/examples/aws/main.tf)**
-* **[examples/gcp/main.tf](file:///Users/aleksandrandreichenko/work/github/module-tf-bastion/examples/gcp/main.tf)**
+## What to Configure Before Deploying
+
+Before deploying these modules, ensure the following infrastructure and settings are prepared:
+
+### For AWS Bastion:
+1. **AWS Credentials**: Configure your AWS CLI or set environment variables (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_DEFAULT_REGION`).
+2. **Target Network**: Prepare an existing VPC and at least one public subnet ID (`vpc_subnet_ids`), so the bastion can receive a public IP.
+3. **S3 Bucket**: Pre-create an S3 bucket (`infrastructure_bucket`) where the module can read/write persistent SSH host keys.
+4. **SSH Key**: Have an SSH public key content ready to associate with the default `ubuntu` user (`ssh_public_key_file`).
+5. **(Optional) Route53 Zone**: If you wish to enable automatic A-record registration, provide the Hosted Zone ID (`route53_zone_id`).
+
+### For GCP Bastion:
+1. **GCP Project**: Configure access to your GCP project (`gcloud auth application-default login`).
+2. **Target Network**: Ensure a VPC network (`network_name`) and public subnetwork (`subnetwork_name`) are configured.
+3. **GCS Bucket**: Pre-create a Google Cloud Storage bucket (`infrastructure_bucket`) for persistent SSH host keys.
+4. **SSH Key**: Provide the public key content (`ssh_public_key_file`) for metadata login.
+5. **(Optional) Cloud DNS Zone**: Provide the Managed Zone name (`dns_zone_name`) to enable Dynamic DNS updates on boot.
+
+---
+
+## CI/CD Pipeline & Mock Deployments
+
+This repository has a built-in CI/CD pipeline managed via **GitHub Actions** ([.github/workflows/terraform.yml](file:///Users/aleksandrandreichenko/work/github/module-tf-bastion/.github/workflows/terraform.yml)):
+
+1. **Lint & Validate (CI)**: On every push and Pull Request, the pipeline runs code format check (`terraform fmt`) and code validation (`terraform validate`) using Terraform **1.9.0** for both AWS and GCP examples.
+2. **Deploy (CD Mock)**: When changes are merged into the `master` branch and the validation step passes, the pipeline initiates a simulated deploy job (`deploy_mock`). This step mocks out the `terraform plan` and `terraform apply` stages, printing deployment step logs and mock output variables for demonstration.
