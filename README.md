@@ -16,7 +16,7 @@ Below is the conceptual architecture of how the Bastion host manages secure exte
 
 ```mermaid
 graph TD
-    Client["💻 Client (SSH)"] -->|1. SSH:22 (Allowed CIDRs Only)| NSG["🛡️ Firewall / SG / NSG"]
+    Client["💻 Client (SSH)"] -->|"1. SSH:22 (Allowed CIDRs Only)"| NSG["🛡️ Firewall / SG / NSG"]
     NSG -->|Allows access| Bastion["🚀 Bastion Host (Public Subnet)"]
     
     subgraph VPC_VNet ["🌐 VPC / VNet (Cloud Provider)"]
