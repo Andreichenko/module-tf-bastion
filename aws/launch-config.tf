@@ -17,7 +17,7 @@ data "template_file" "bastion_user_data" {
     # Join the rendered templates per additional user into a single string variable.
 
     additional_user_templates                                   = join("\n", data.template_file.additional_user.*.rendered)
-    infrastructure_bucket_additional_external_users_script_etag = aws_s3_bucket_object.additional-external-users-script.etag
+    infrastructure_bucket_additional_external_users_script_etag = length(aws_s3_bucket_object.additional-external-users-script) > 0 ? aws_s3_bucket_object.additional-external-users-script[0].etag : ""
     additional-external-users-script-md5                        = local.additional-external-users-script-md5
   }
 }
