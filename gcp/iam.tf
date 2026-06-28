@@ -5,8 +5,11 @@ resource "google_service_account" "bastion" {
   display_name = "${var.bastion_name} bastion access to the project"
 }
 
+data "google_client_config" "current" {}
+
 resource "google_project_iam_member" "bastion_dns" {
-  role = "roles/dns.admin"
+  project = data.google_client_config.current.project
+  role    = "roles/dns.admin"
 
   member = "serviceAccount:${google_service_account.bastion.email}"
 }
