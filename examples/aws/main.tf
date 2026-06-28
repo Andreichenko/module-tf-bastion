@@ -1,3 +1,17 @@
+terraform {
+  required_version = ">= 0.14"
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = ">= 2.30.0"
+    }
+    template = {
+      source  = "hashicorp/template"
+      version = ">= 2.1.2"
+    }
+  }
+}
+
 provider "aws" {
   region = "us-east-1"
 }
@@ -5,10 +19,26 @@ provider "aws" {
 # Example S3 bucket for storing persisting data like SSH host keys
 resource "aws_s3_bucket" "infra_bucket" {
   bucket_prefix = "bastion-infra-bucket-"
-  acl           = "private"
+}
 
-  versioning {
-    enabled = true
+resource "aws_s3_bucket_ownership_controls" "infra_bucket" {
+  bucket = aws_s3_bucket.infra_bucket.id
+  rule {
+    object_ownership = "BucketOwnerPreferred"
+  }
+}
+
+resource "aws_s3_bucket_acl" "infra_bucket" {
+  depends_on = [aws_s3_bucket_ownership_controls.infra_bucket]
+
+  bucket = aws_s3_bucket.infra_bucket.id
+  acl    = "private"
+}
+
+resource "aws_s3_bucket_versioning" "infra_bucket" {
+  bucket = aws_s3_bucket.infra_bucket.id
+  versioning_configuration {
+    status = "Enabled"
   }
 }
 
