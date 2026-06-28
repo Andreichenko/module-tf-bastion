@@ -52,6 +52,17 @@ jobs:
         cd examples/gcp
         terraform validate
 
+    # 6. Initialize and Validate Azure Module Example
+    - name: Azure - Terraform Init
+      run: |
+        cd examples/azure
+        terraform init -backend=false
+
+    - name: Azure - Terraform Validate
+      run: |
+        cd examples/azure
+        terraform validate
+
   deploy_mock:
     name: 'Deploy (Mock)'
     needs: validate
@@ -79,4 +90,14 @@ jobs:
         echo "Running: terraform plan -out=tfplan"
         echo "Running: terraform apply tfplan"
         echo "SUCCESS: GCP Bastion deployed successfully."
+        echo "=========================================================="
+
+    - name: Simulate Azure Deploy
+      run: |
+        echo "=========================================================="
+        echo "Starting deployment of Azure Bastion infrastructure..."
+        echo "Running: terraform plan -out=tfplan"
+        echo "Running: terraform apply tfplan"
+        echo "SUCCESS: Azure Bastion deployed successfully."
+        echo "Output: nsg_id = /subscriptions/sub1/resourceGroups/rg/providers/Microsoft.Network/networkSecurityGroups/su-bastion-nsg"
         echo "=========================================================="
