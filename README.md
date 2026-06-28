@@ -1,6 +1,48 @@
 # Terraform Bastion Modules for GCP, AWS and Azure
 
+![Terraform Version](https://img.shields.io/badge/Terraform-%3E%3D%201.0-844FBA?logo=terraform)
+![AWS Provider](https://img.shields.io/badge/AWS-%7E%3E%204.0-FF9900?logo=amazon-aws)
+![GCP Provider](https://img.shields.io/badge/GCP-%7E%3E%204.0-4285F4?logo=google-cloud)
+![Azure Provider](https://img.shields.io/badge/Azure-%7E%3E%203.0-0089D6?logo=microsoft-azure)
+![CI/CD Pipeline](https://img.shields.io/github/actions/workflow/status/Andreichenko/module-tf-bastion/terraform.yml?branch=master&label=CI%2FCD)
+
 This repository contains reusable Terraform modules to manage a secure, resilient, and self-healing bastion host on Amazon Web Services (AWS), Google Cloud Platform (GCP), or Microsoft Azure.
+
+---
+
+## 📐 Architecture Diagram
+
+Below is the conceptual architecture of how the Bastion host manages secure external access to your private infrastructure:
+
+```mermaid
+graph TD
+    Client["💻 Client (SSH)"] -->|1. SSH:22 (Allowed CIDRs Only)| NSG["🛡️ Firewall / SG / NSG"]
+    NSG -->|Allows access| Bastion["🚀 Bastion Host (Public Subnet)"]
+    
+    subgraph VPC_VNet ["🌐 VPC / VNet (Cloud Provider)"]
+        Bastion
+        
+        subgraph Private_Subnet ["🔒 Private Subnet"]
+            AppVM["🖥️ Internal App Servers (No Public IP)"]
+            DB["🗄️ Private Databases (RDS/Cloud SQL/No Public IP)"]
+        end
+        
+        subgraph Key_Storage ["📦 External Storage"]
+            Keys["🔑 SSH Host Keys Storage (S3 / GCS / Azure Blob)"]
+        end
+        
+        subgraph Logging ["📊 Logs Monitoring"]
+            LogsService["📈 CloudWatch / Cloud Logging / Log Analytics"]
+        end
+    end
+    
+    Bastion <-->|2. Sync SSH Host Keys| Keys
+    Bastion -->|3. Ship auth.log & syslog| LogsService
+    Bastion -->|4. Access via SSH Tunneling| AppVM
+    Bastion -->|4. Access via Port Forwarding| DB
+```
+
+---
 
 ## Key Design Features
 
