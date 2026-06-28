@@ -145,7 +145,7 @@ ${additional_user_templates}
 info Running the additional-external-users script -- check systemctl or journalctl additional-external-users to see output
 aws s3 --region $${EC2_REGION} cp s3://${infrastructure_bucket}/${infrastructure_bucket_bastion_key}/additional-external-users /usr/local/bin/additional-external-users
 info using etag ${infrastructure_bucket_additional_external_users_script_etag}
-info using md5 ${additional-external-users-script-md5}
+info using md5 ${additional_external_users_script_md5}
 chmod +x /usr/local/bin/additional-external-users
 
 info Installing the additional-external-users systemd service

@@ -82,13 +82,13 @@ EOF
 }
 
 locals {
-  additional-external-users-script-content = format("%s%s", "#!/bin/bash \n\n", join("\n", data.template_file.additional_external_user.*.rendered))
-  additional-external-users-script-md5     = md5(local.additional-external-users-script-content)
+  additional_external_users_script_content = format("%s%s", "#!/bin/bash \n\n", join("\n", data.template_file.additional_external_user.*.rendered))
+  additional_external_users_script_md5     = md5(local.additional_external_users_script_content)
 }
 
-resource "aws_s3_bucket_object" "additional-external-users-script" {
+resource "aws_s3_bucket_object" "additional_external_users_script" {
   count   = length(var.additional_external_users) > 0 ? 1 : 0
   bucket  = var.infrastructure_bucket
   key     = "${var.infrastructure_bucket_bastion_key}/additional-external-users"
-  content = local.additional-external-users-script-content
+  content = local.additional_external_users_script_content
 }

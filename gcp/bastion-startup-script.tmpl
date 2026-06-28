@@ -153,7 +153,7 @@ fi
 ${additional_user_templates}
 
 # Run the additional-external-users script from GCS if configured
-if [ "${additional-external-users-script-md5}" != "" ] ; then
+if [ "${additional_external_users_script_md5}" != "" ] ; then
   info Running the additional-external-users script
   gsutil cp gs://${infrastructure_bucket}/${infrastructure_bucket_bastion_key}/additional-external-users /usr/local/bin/additional-external-users
   chmod +x /usr/local/bin/additional-external-users
